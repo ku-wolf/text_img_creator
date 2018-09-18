@@ -1,0 +1,54 @@
+#!/bin/bash
+position=()
+inter_ext=".bmp"
+default_svg_col="#000000"
+color="$default_svg_col"
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+case $key in 
+    -c|--set-color)
+    color="$2"
+    shift
+    shift
+    ;;
+    -e|--set-extension)
+    inter_ext="$2"
+    shift
+    shift
+    ;;
+    -s|--skip-remove)
+    skip_rm=""
+    shift
+    shift
+    ;;
+    -r|--rename)
+    new_name=$2
+    shift
+    shift
+    ;;
+    *)
+    position+=("$key")
+    shift
+    ;;
+esac
+done
+
+set -- "${position[@]}"
+
+name_and_ext=$(basename "$1")
+name_only="${name_and_ext%%.*}"
+if [[ -z "${new_name+'notempty'}" ]]
+then
+    new_name=$name_only
+fi
+inter_file="${name_only}${inter_ext}"
+
+convert "$name_and_ext" "$inter_file"
+potrace "$inter_file" -s -o "${new_name}.svg"
+sed -i -e "s/${default_svg_col}/${color}/" "${name_only}.svg"
+if [[ -z "${skip_rm+'notempty'}" ]]
+then
+    rm "$name_and_ext" "$inter_file"
+fi
