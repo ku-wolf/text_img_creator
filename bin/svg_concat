@@ -1,0 +1,3 @@
+#!/bin/bash
+files=$(svg_stack "$@")
+rm $files

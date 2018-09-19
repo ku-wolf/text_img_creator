@@ -15,8 +15,6 @@ width_key = ImageProps.width_key
 height_key = ImageProps.height_key
 back_col_key = ImageProps.back_col_key
 frame_fname_base = "frame_"
-wipe_animation_lr = "x"
-wipe_animation_tb = "y"
 default_color_mode = "RGBA"
 black_col = (0, 0, 0, 255)
 white_col = (255, 255, 255, 255)
@@ -75,21 +73,6 @@ def record_image_properties(func):
     return wrapper
 
 
-def get_frame_fname(frame_number, ext):
-    """Return name of frame based on frame number and extension."""
-    if ext is None:
-        ext = environ["default_frame_ext"]
-
-    digits = floor(log(int(frame_number), 10)) + 1
-    frame_number_length = 6
-    zeros = frame_number_length - digits
-
-    frame_number = str(frame_number)
-    for i in range(0, zeros):
-        frame_number = "0" + frame_number
-    return frame_fname_base + frame_number + str(ext)
-
-
 def decode_hex_col(color):
     """Translate hex col into 3 tuple col."""
     if color.startswith("#"):
@@ -105,11 +88,6 @@ def encode_hex_col(color):
             hex_col += format(c, '02x')
             return hex_col
     return color
-
-
-def save_frame(image, frame_number, fext=None):
-    """Save frame of animation."""
-    image.save(get_frame_fname(frame_number, fext))
 
 
 def determine_min_image_size(
