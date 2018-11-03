@@ -1,6 +1,8 @@
 """Pillow extensions."""
 from collections.abc import MutableMapping
-
+import sys
+import os
+import subprocess
 
 class InvalidPadding(Exception):
     """Raised on padding of length 3, or >4."""
@@ -98,3 +100,23 @@ class ImageProps(MutableMapping):
     def __str__(self):
         """Get string of storage."""
         return str(self._storage)
+
+
+def run_command_on_imgs(create_command, apply_command_to_img=lambda x, y: True, source_dir_path=None, types=None):
+    if types is None:
+        types = [".png"]
+
+    fname_iter = None
+    if len(sys.argv) > 1:
+        fname_iter = sys.argv
+    else:
+        fname_iter = [os.path.join(source_dir_path, fname_and_extension) for fname_and_extension in os.listdir(source_dir_path)]
+
+    output = []
+    for fname_and_extension in fname_iter:
+        fname, fext = os.path.splitext(fname_and_extension)
+        if apply_command_to_img(fname, fext) and fext in types:
+            output_file, command = create_command(fname, fext)
+            subprocess.run(command)
+            output.append(output_file)
+    return output

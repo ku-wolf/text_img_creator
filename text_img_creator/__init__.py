@@ -98,7 +98,8 @@ def determine_min_image_size(
     horizontal=False
 ):
     """Determine minimum image size to contain text."""
-    def generate_fonts():
+    def generate_fonts(font_name):
+        """Generate progressively larger fonts."""
         i = 0
         while True:
             yield ImageFont.truetype(font_name, i)
@@ -179,7 +180,7 @@ def determine_min_image_size(
         p_t, p_b, p_l, p_r = t.padding
         str_text = str(t)
         if font_size is None:
-            fonts = generate_fonts()
+            fonts = generate_fonts(font_name)
         else:
             fonts = [ImageFont.truetype(font_name, font_size)]
 
@@ -415,6 +416,7 @@ def make_lean_image(
             horizontal=horizontal
         )
         width, height, wh, image_font = determine_min_image_size(text, **kargs)
+
     else:
         width, height, wh, image_font = image_props
     if require_even:
